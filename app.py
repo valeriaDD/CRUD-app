@@ -30,7 +30,9 @@ def hello_world():  # put application's code here
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    return jsonify(users)
+    if len(users) == 0:
+        return {}, 204
+    return jsonify(users), 200
 
 
 @app.route('/users', methods=["POST"])
@@ -63,9 +65,11 @@ def update_user(id):
                 if "surname" in data:
                     users[index]["surname"] = data["surname"]
 
-                return '', 204
+                return '', 200
+    else:
+        return "Invalid data", 400
 
-    return "Invalid data", 400
+    return "Not Found", 404
 
 
 @app.route('/users/<id>', methods=["GET"])
@@ -74,7 +78,7 @@ def get_user(id):
         if users[index]["id"] == int(id):
             return jsonify(users[index])
 
-    return "Not found", 400
+    return "Not found", 404
 
 
 @app.route('/users/<id>', methods=["DELETE"])
@@ -84,7 +88,7 @@ def delete_user(id):
             del users[index]
             return '', 200
 
-    return "Not found", 400
+    return "Not found", 404
 
 
 if __name__ == '__main__':
